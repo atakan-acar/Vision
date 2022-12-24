@@ -18,7 +18,15 @@ namespace Vision.Model
 
         public string ColumValue { get; set; }
 
-        public ConditionType ConditionType { get; set; }
+        public ConditionType ConditionType { get; private set; }
+
+        public Condition(string column, string op, string columValue, ConditionType conditionType)
+        {
+            Op = op;
+            Column = column;
+            ColumValue = columValue;
+            ConditionType = conditionType;
+        }
     }
 
     public enum ConditionType
