@@ -25,6 +25,5 @@ var q2 = new Query("Books").Select(c)
     .Q();
 
 List<string> c2 = new List<string>() { "Name", "State"};
-var q3 = new Query("Authors").Select(c2).Q();
+var q3 = new Query("Authors").Select(c2).Q(); 
  
-Console.WriteLine("q3: {0}",q3);

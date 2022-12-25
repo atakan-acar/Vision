@@ -108,6 +108,11 @@ namespace Vision.Query
             return this.query;
         }
 
+        public StateObject QState()
+        {
+            return this.State;
+        }
+
         private string BaseSelect(string table, IEnumerable<string> columnsArr)
         {
             string columns = string.Join(",", columnsArr);
@@ -130,5 +135,6 @@ namespace Vision.Query
 
             return t.ToString();
         }
+        
     }
 }
