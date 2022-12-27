@@ -10,14 +10,17 @@ namespace Vision.Model
     {
         /// <summary>
         /// Operator
-        //  "=", "<", ">", "<=", ">=", "<>", "!=", "<=>",
+        ///  "=", "<", ">", "<=", ">=", "<>", "!=", "<=>",
         /// </summary>
         public string Op { get; set; }
 
         public string Column { get; set; }
 
-        public string ColumValue { get; set; }
-
+        public string ColumValue { get; set; } 
+        /// <summary>
+        /// Condition Splice
+        ///  AND, ORS
+        /// </summary>
         public ConditionType ConditionType { get; private set; }
 
         public Condition(string column, string op, string columValue, ConditionType conditionType)

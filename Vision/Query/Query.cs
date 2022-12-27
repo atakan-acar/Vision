@@ -13,7 +13,7 @@ namespace Vision.Query
     {
         private string Table = "";
         private string query;
-        private StateObject State; 
+        private StateObject State;
         public Query(string tableName)
         {
             this.Table = tableName;
@@ -90,15 +90,60 @@ namespace Vision.Query
             if (this.State.ConditionStarted)
                 throw new Exception("Join started before condition");
 
-            string join = $" {joinType} JOIN  {table} ON {column} = {secondColumn}"; 
+            string join = $" {joinType} JOIN  {table} ON {column} = {secondColumn}";
             QAdd(join);
+            return this;
+        }
+
+
+        /// <summary>
+        /// WHERE (<CONDITIONGROUP>])
+        /// For Example: WHERE (State = 1 OR STATE = 2) AND STATE = 4
+        /// </summary>
+        /// <param name="groups"></param>
+        /// <returns></returns>
+        public Query ConditionGroup(List<ConditionGroup> groups)
+        {
+            StringBuilder builder = new StringBuilder();
+            builder.Append(" (");
+            foreach (var group in groups)
+            {
+                foreach (var condition in group.Conditions)
+                {
+                    builder.Append(ConditionToString(condition));
+                    this.State.ConditionStarted = true;
+                }
+            }
+            builder.Append(")");
+            QAdd(builder.ToString());
+            return this;
+        }
+
+        /// <summary>
+        /// WHERE (<CONDITIONGROUP>])
+        /// For Example: WHERE (State = 1 OR STATE = 2) AND STATE = 4
+        /// </summary>
+        /// <param name="groups"></param>
+        /// <returns></returns>
+        public Query ConditionGroup(ConditionGroup groups)
+        {
+            StringBuilder builder = new StringBuilder();
+            builder.Append(" ("); 
+            foreach (var condition in groups.Conditions)
+            {
+                builder.Append(ConditionToString(condition));
+                this.State.ConditionStarted = true;
+            }
+
+            builder.Append(")");
+            QAdd(builder.ToString());
             return this;
         }
 
         public Query SingleCondition(Condition condition)
         {
             this.State.ConditionStarted = true;
-            QAdd(ConditionToString(condition)); 
+            QAdd(ConditionToString(condition));
             return this;
         }
 
@@ -117,7 +162,7 @@ namespace Vision.Query
         {
             string columns = string.Join(",", columnsArr);
             return string.Format(SqlBaseConstants.BaseSelect, columns, this.Table); ;
-        } 
+        }
 
         private string QAdd(string query)
         {
@@ -126,7 +171,7 @@ namespace Vision.Query
         private string ConditionToString(Condition condition)
         {
             string startCondition = this.State.ConditionStarted ? "" : "WHERE";
-            return string.Format(" {0} {1} {2} {3} '{4}'", startCondition ,ResolveCondition(condition.ConditionType), condition.Column, condition.Op, condition.ColumValue);
+            return string.Format(" {0} {1} {2} {3} '{4}'", startCondition, ResolveCondition(condition.ConditionType), condition.Column, condition.Op, condition.ColumValue);
         }
         private string ResolveCondition(ConditionType t)
         {
@@ -135,6 +180,6 @@ namespace Vision.Query
 
             return t.ToString();
         }
-        
+
     }
 }

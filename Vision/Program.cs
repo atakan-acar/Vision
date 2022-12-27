@@ -11,11 +11,22 @@ var q = new Query("Books").Select(c)
 
 Condition condition = new Condition("Title", "=", "Outliers", ConditionType.EMPTY);
 
+
+
 List<Condition> conditions = new List<Condition>()
 {
-    new Condition("[Books].State", "=", "1", ConditionType.AND),
-    new Condition("[Books].State", "=", "2", ConditionType.OR)
+    new Condition("[Authors].State", "=", "1", ConditionType.EMPTY),
+    new Condition("[Authors].State", "=", "2", ConditionType.OR)
 };
+
+
+List<ConditionGroup> conditionGroups = new List<ConditionGroup>();
+conditionGroups.Add(new ConditionGroup
+{
+    Conditions = conditions,
+});
+
+
 
 var q2 = new Query("Books").Select(c)
     .Join("Authors", "LEFT", "[Books].AuthorId", "[Authors].Id")
@@ -24,6 +35,13 @@ var q2 = new Query("Books").Select(c)
     .MultipleCondition(conditions)
     .Q();
 
-List<string> c2 = new List<string>() { "Name", "State"};
-var q3 = new Query("Authors").Select(c2).Q(); 
+
+List<string> authorsColumn = new List<string>() { "[Authors].Id", "[Authors].State"};
+
+
+var q3 = new Query("Authors").Select(authorsColumn).ConditionGroup(conditionGroups).Q();
+Console.WriteLine(q3);
+
+//List<string> c2 = new List<string>() { "Name", "State"};
+//var q3 = new Query("Authors").Select(c2).Q(); 
  
