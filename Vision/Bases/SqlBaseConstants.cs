@@ -19,5 +19,6 @@ namespace Vision.Bases
         public const string LEFTJOIN = "LEFT JOIN";
         public const string RIGHTJOIN = "RIGHT JOIN";
         public const string INNERJOIN = "INNER JOIN";
+        public const string ORDERBY = " ORDER BY ";
     }
 }

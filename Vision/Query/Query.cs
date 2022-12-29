@@ -22,6 +22,7 @@ namespace Vision.Query
 
         public Query Select(IEnumerable<string> columns)
         {
+            this.State.QueryStarted = true;
             QAdd(BaseSelect(this.Table, columns));
             return this;
         }
@@ -49,7 +50,7 @@ namespace Vision.Query
         public Query WhereIn(string column, string[] values, string op = "")
         {
             if (values.Length == 0)
-                throw new ArgumentException("Values empty");
+                throw new StateException("Values empty");
 
             string query =
                 this.State.ConditionStarted ? " " + column + " IN" + " {0} " : SqlBaseConstants.Where + " " + column + " IN {0} ";
@@ -71,10 +72,15 @@ namespace Vision.Query
             return this;
         }
 
+        /// <summary>
+        /// {joinType} JOIN {table} ON {column} = {secondColumn}
+        /// For Example: LEFT JOIN Category  ON [P].categoryId = [C].Id
+        /// </summary>
+        /// <param name="joins">tables to merge</param>  
         public Query Join(IEnumerable<Join> joins)
         {
             if (this.State.ConditionStarted)
-                throw new Exception("Join started before condition");
+                throw new StateException("Join started before condition");
 
             string fullJoin = "";
             foreach (var join in joins)
@@ -85,10 +91,20 @@ namespace Vision.Query
             return this;
         }
 
+
+        /// <summary>
+        /// {joinType} JOIN {table} ON {column} = {secondColumn}
+        /// For Example: LEFT JOIN Category  ON [P].categoryId = [C].Id
+        /// </summary>
+        /// <param name="table">table to merge</param> 
+        /// <param name="joinType">Join type "LEFT", "RIGHT", "INNER"</param> 
+        /// <param name="column">Main table column</param> 
+        /// <param name="secondColumn">table column to join</param> 
+        /// <returns>this object</returns>
         public Query Join(string table, string joinType, string column, string secondColumn)
         {
             if (this.State.ConditionStarted)
-                throw new Exception("Join started before condition");
+                throw new StateException("Join started before condition");
 
             string join = $" {joinType} JOIN  {table} ON {column} = {secondColumn}";
             QAdd(join);
@@ -97,8 +113,45 @@ namespace Vision.Query
 
 
         /// <summary>
+        /// ORDER BY <order.column> <order.orderType>
+        /// For Example: ... ORDER BY Name DESC
+        /// </summary>
+        /// <param name="order">Object to sort</param> 
+        /// <returns></returns>
+        public Query Order(Order order)
+        {
+            if (!this.State.QueryStarted)
+                throw new StateException("Query is not started");
+
+            StringBuilder sb = new StringBuilder();
+
+            sb.Append(SqlBaseConstants.ORDERBY);
+            sb.Append(order.Column);
+            sb.Append(" " + order.OrderType.ToString());
+
+            QAdd(sb.ToString());
+
+            return this;
+        }
+
+        /// <summary>
+        /// ORDER BY <column> <orderType>
+        /// For Example: ... ORDER BY Name ASC
+        /// </summary>
+        /// <param name="column">Order of column</param>
+        /// <param name="orderType">Order Type ASC or DESC</param>
+        /// <returns></returns>
+        public Query Order(string column, OrderType orderType)
+        {
+            Order order = new Order(column, orderType);
+            Order(order); 
+            return this;
+        }
+
+
+        /// <summary>
         /// WHERE (<CONDITIONGROUP>])
-        /// For Example: WHERE (State = 1 OR STATE = 2) AND STATE = 4
+        /// For Example: ... WHERE (State = 1 OR STATE = 2) AND STATE = 4
         /// </summary>
         /// <param name="groups"></param>
         /// <returns></returns>
