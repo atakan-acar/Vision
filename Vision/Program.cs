@@ -40,8 +40,4 @@ List<string> authorsColumn = new List<string>() { "[Authors].Id", "[Authors].Sta
 
 
 var q3 = new Query("Authors").Select(authorsColumn).ConditionGroup(conditionGroups).Q();
-Console.WriteLine(q3);
-
-//List<string> c2 = new List<string>() { "Name", "State"};
-//var q3 = new Query("Authors").Select(c2).Q(); 
  

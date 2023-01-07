@@ -150,7 +150,7 @@ namespace Vision.Query
 
 
         /// <summary>
-        /// WHERE (<CONDITIONGROUP>])
+        /// WHERE (<CONDITIONGROUP>)
         /// For Example: ... WHERE (State = 1 OR STATE = 2) AND STATE = 4
         /// </summary>
         /// <param name="groups"></param>
@@ -173,7 +173,7 @@ namespace Vision.Query
         }
 
         /// <summary>
-        /// WHERE (<CONDITIONGROUP>])
+        /// WHERE (<CONDITIONGROUP>)
         /// For Example: WHERE (State = 1 OR STATE = 2) AND STATE = 4
         /// </summary>
         /// <param name="groups"></param>
